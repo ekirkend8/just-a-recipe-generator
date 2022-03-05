@@ -45,6 +45,4 @@ def scrape_page_urls(url):
         if url.startswith(google_domains):
             links.remove(url)
 
-    print(f"Retrieved {len(links)} links\n")
-
     return links
