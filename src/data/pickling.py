@@ -7,7 +7,7 @@ def save_pickle(big_object, pickle_path):
     print(f"Saving pickle to {pickle_path}...")
 
 
-def load_pickle(load_object, pickle_path):
+def load_pickle(pickle_path):
     with open(pickle_path, "rb") as pickle_file:
         load_object = pickle.load(pickle_file)
     print(f"Loading {pickle_path} for consumption...")
