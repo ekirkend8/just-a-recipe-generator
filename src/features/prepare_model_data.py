@@ -23,10 +23,6 @@ def ingredients_to_text(recipe_dict):
     return ingredients_text
 
 
-def text_from_ids(ids):
-  return tf.strings.reduce_join(chars_from_ids(ids), axis=-1).numpy()
-
-
 def tokenize_text(text):
     vocab = sorted(set(text))
 
@@ -35,7 +31,16 @@ def tokenize_text(text):
         vocabulary=vocab, mask_token=None
     )
 
-    return vocab, ids_from_chars
+    chars_from_ids = tf.keras.layers.StringLookup(
+        vocabulary=ids_from_chars.get_vocabulary(),
+        invert=True, mask_token=None
+    )
+
+    return vocab, ids_from_chars, chars_from_ids
+
+
+def text_from_ids(ids, chars_from_ids):
+  return tf.strings.reduce_join(chars_from_ids(ids), axis=-1).numpy()
 
 
 def create_sequences(text, ids_from_chars, seq_length=100):
@@ -72,13 +77,3 @@ def make_training_data(dataset0):
     )
 
     return dataset
-
-
-def create_model_data(recipe_dict):
-    text = ingredients_to_text(recipe_dict)
-    vocab, ids_from_chars = tokenize_text(text)
-    sequences = create_sequences(text, ids_from_chars)
-    dataset0 = sequences.map(split_input_target)
-    dataset = make_training_data(dataset0)
-
-    return dataset0, dataset
