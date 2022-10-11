@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 def ingredients_to_text(recipe_dict):
+    """Convert dict of recipes into a string"""
     all_ingredients = []
 
     for recipe_ingredients in list(recipe_dict.values()):

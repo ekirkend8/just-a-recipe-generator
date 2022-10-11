@@ -25,7 +25,7 @@ def get_recipe_info(url):
     recipe_dict = {}
 
     html = requests.get(url)
-    soup = BeautifulSoup(html.text, 'lxml')
+    soup = BeautifulSoup(html.text, "html.parser")
 
     try:
         scripts = [item for item in soup.find("script", {"class": "yoast-schema-graph"})]
@@ -56,13 +56,16 @@ def scrape_shoestring_page(url):
     return recipe_info
 
 
-def scrape_all_shoestring_pages():
+def scrape_all_shoestring_pages(nbr_pages=0):
     all_recipes = {}
+    
+    if nbr_pages == 0:
+        nbr_pages = 55
 
     # Each page's url is formatted the same way
     all_urls = [
         "https://glutenfreeonashoestring.com/gluten-free-recipes/?_paged=" + str(number)
-        for number in range(1, 55)
+        for number in range(1, nbr_pages)
     ]
     all_urls.append("https://glutenfreeonashoestring.com/gluten-free-recipes/")
 

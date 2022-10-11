@@ -4,14 +4,14 @@ import copy
 import tensorflow as tf
 
 
-class MyModel(tf.keras.Model):
+class RNNModel(tf.keras.Model):
   def __init__(self, vocab_size, embedding_dim, rnn_units):
     super().__init__(self)
-    self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim)
-    self.gru = tf.keras.layers.GRU(rnn_units,
+    self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim) # input layer
+    self.gru = tf.keras.layers.GRU(rnn_units, # type of RNN
                                    return_sequences=True,
                                    return_state=True)
-    self.dense = tf.keras.layers.Dense(vocab_size)
+    self.dense = tf.keras.layers.Dense(vocab_size) # output layer
 
   def call(self, inputs, states=None, return_state=False, training=False):
     x = inputs
@@ -28,7 +28,7 @@ class MyModel(tf.keras.Model):
 
 
 class OneStep(tf.keras.Model):
-    """Make a single step prediction"""
+    """Make a single step prediction for next character and its new state."""
     def __init__(self, model, chars_from_ids, ids_from_chars, temperature=1.0):
         super().__init__()
         self.temperature = temperature
@@ -94,12 +94,13 @@ def train_rnn_model(dataset, ids_from_chars, vocab, embedding_dim=256, rnn_units
 
     checkpoint_callback = prep_checkpoints()
 
-    model = MyModel(
+    model = RNNModel(
         # Be sure the vocabulary size matches the `StringLookup` layers.
         vocab_size=len(ids_from_chars.get_vocabulary()),
         embedding_dim=embedding_dim,
         rnn_units=rnn_units
     )
+    # logits: model returns probabilities / numbers btwn 0 and 1
     loss = tf.losses.SparseCategoricalCrossentropy(from_logits=True)
     model.compile(optimizer='adam', loss=loss)
 
@@ -108,14 +109,15 @@ def train_rnn_model(dataset, ids_from_chars, vocab, embedding_dim=256, rnn_units
     return history, model
 
 
-def apply_one_step_model(model, chars_from_ids, ids_from_chars):
+def apply_one_step_model(model, chars_from_ids, ids_from_chars, steps=1000):
+    """Run the one-step RNN model in a loop to generate text."""
     one_step_model = OneStep(model, chars_from_ids, ids_from_chars)
     start = time.time()
     states = None
     next_char = tf.constant(['Ingredients:'])
     result = [next_char]
 
-    for n in range(1000):
+    for n in range(steps):
         next_char, states = one_step_model.generate_one_step(next_char, states=states)
         result.append(next_char)
 
