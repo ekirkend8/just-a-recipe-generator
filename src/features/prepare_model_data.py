@@ -27,7 +27,7 @@ def ingredients_to_text(recipe_dict):
 def tokenize_text(text):
     vocab = sorted(set(text))
 
-    # split text into tokens to convert tokens to charcter ID's
+    # split text into tokens to convert tokens to character ID's
     ids_from_chars = tf.keras.layers.StringLookup(
         vocabulary=vocab, mask_token=None
     )
@@ -41,7 +41,7 @@ def tokenize_text(text):
 
 
 def text_from_ids(ids, chars_from_ids):
-  return tf.strings.reduce_join(chars_from_ids(ids), axis=-1).numpy()
+    return tf.strings.reduce_join(chars_from_ids(ids), axis=-1).numpy()
 
 
 def create_sequences(text, ids_from_chars, seq_length=100):
