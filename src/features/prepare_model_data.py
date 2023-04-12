@@ -7,15 +7,15 @@ def ingredients_to_text(recipe_dict):
     all_ingredients = []
 
     for recipe in list(recipe_dict.keys()):
-        all_ingredients.extend([recipe])
+#         all_ingredients.extend([recipe])
         all_ingredients.extend(["Ingredients:"])
         all_ingredients.extend(recipe_dict[recipe])
 
     ingredients_text = ""
 
     for ingredient in all_ingredients:
-    #     if ingredient == "Ingredients:":
-    #         ingredients_text += "\n"
+        if ingredient == "Ingredients:":
+            ingredients_text += "\n"
         ingredient_words = ingredient.split(" ")
         ingredients_text += ("\n " + " ".join(ingredient_words))
 
