@@ -36,7 +36,7 @@ def clean_recipe_title(recipe_dict):
     clean_recipe_dict = {}
 
     for recipe in list(recipe_dict.keys()):
-        if re.sub(r'[^a-zA-Z ]+', '', recipe) is not "":
+        if re.sub(r'[^a-zA-Z ]+', '', recipe) != "":
             recipe_new = re.sub(r'[^a-zA-Z ]+', '', recipe)
         else:
             recipe_new = recipe

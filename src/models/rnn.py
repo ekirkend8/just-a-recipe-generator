@@ -7,6 +7,7 @@ import tensorflow as tf
 class RNNModel(tf.keras.Model):
   def __init__(self, vocab_size, embedding_dim, rnn_units):
     super().__init__(self)
+    tf.keras.backend.set_image_data_format("channels_last")
     self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim) # input layer
     self.gru = tf.keras.layers.GRU(rnn_units, # type of RNN
                                    return_sequences=True,
@@ -109,9 +110,14 @@ def train_rnn_model(dataset, ids_from_chars, vocab, embedding_dim=256, rnn_units
     return history, model
 
 
-def apply_one_step_model(model, chars_from_ids, ids_from_chars, steps=1000):
+def create_one_step_model(model, chars_from_ids, ids_from_chars):
     """Run the one-step RNN model in a loop to generate text."""
     one_step_model = OneStep(model, chars_from_ids, ids_from_chars)
+
+    return one_step_model
+
+
+def apply_one_step_model(one_step_model, steps=1000):
     start = time.time()
     states = None
     next_char = tf.constant(['Ingredients:'])
@@ -125,4 +131,17 @@ def apply_one_step_model(model, chars_from_ids, ids_from_chars, steps=1000):
     end = time.time()
     print(result[0].numpy().decode('utf-8'), '\n\n' + '_'*80)
     print('\nRun time:', end - start)
-    tf.saved_model.save(one_step_model, 'one_step')
+
+    return one_step_model
+
+
+def save_model(model, model_name="one_step"):
+    tf.saved_model.save(model, model_name)
+    return None
+
+
+def retrieve_model():
+    saved_model = tf.saved_model.load(
+        "one_step", tags=None, options=None
+    )
+    return saved_model
