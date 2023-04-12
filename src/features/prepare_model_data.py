@@ -6,17 +6,16 @@ def ingredients_to_text(recipe_dict):
     """Convert dict of recipes into a string"""
     all_ingredients = []
 
-    for recipe_ingredients in list(recipe_dict.values()):
+    for recipe in list(recipe_dict.keys()):
+        all_ingredients.extend([recipe])
         all_ingredients.extend(["Ingredients:"])
-        all_ingredients.extend(recipe_ingredients)
-
-    ingredients_text = ""
+        all_ingredients.extend(recipe_dict[recipe])
 
     ingredients_text = ""
 
     for ingredient in all_ingredients:
-        if ingredient == "Ingredients:":
-            ingredients_text += "\n"
+    #     if ingredient == "Ingredients:":
+    #         ingredients_text += "\n"
         ingredient_words = ingredient.split(" ")
         ingredients_text += ("\n " + " ".join(ingredient_words))
 
@@ -89,4 +88,4 @@ def prep_data(recipe_dict):
     dataset0 = sequences.map(split_input_target)
     dataset = make_training_data(dataset0)
     
-    return dataset
+    return dataset, ids_from_chars, chars_from_ids, vocab

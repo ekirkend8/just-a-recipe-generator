@@ -5,27 +5,27 @@ import tensorflow as tf
 
 
 class RNNModel(tf.keras.Model):
-  def __init__(self, vocab_size, embedding_dim, rnn_units):
-    super().__init__(self)
-    tf.keras.backend.set_image_data_format("channels_last")
-    self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim) # input layer
-    self.gru = tf.keras.layers.GRU(rnn_units, # type of RNN
-                                   return_sequences=True,
-                                   return_state=True)
-    self.dense = tf.keras.layers.Dense(vocab_size) # output layer
+    def __init__(self, vocab_size, embedding_dim, rnn_units):
+        super().__init__(self)
+        tf.keras.backend.set_image_data_format("channels_last") # formats data to prevent error
+        self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim) # input layer
+        self.gru = tf.keras.layers.GRU(rnn_units, # type of RNN
+                                       return_sequences=True,
+                                       return_state=True)
+        self.dense = tf.keras.layers.Dense(vocab_size) # output layer
 
-  def call(self, inputs, states=None, return_state=False, training=False):
-    x = inputs
-    x = self.embedding(x, training=training)
-    if states is None:
-      states = self.gru.get_initial_state(x)
-    x, states = self.gru(x, initial_state=states, training=training)
-    x = self.dense(x, training=training)
+    def call(self, inputs, states=None, return_state=False, training=False):
+        x = inputs
+        x = self.embedding(x, training=training)
+        if states is None:
+            states = self.gru.get_initial_state(x)
+        x, states = self.gru(x, initial_state=states, training=training)
+        x = self.dense(x, training=training)
 
-    if return_state:
-      return x, states
-    else:
-      return x
+        if return_state:
+            return x, states
+        else:
+            return x
 
 
 class OneStep(tf.keras.Model):
@@ -38,11 +38,11 @@ class OneStep(tf.keras.Model):
         self.ids_from_chars = ids_from_chars
 
         # Create a mask to prevent "[UNK]" from being generated.
-        skip_ids = self.ids_from_chars(['[UNK]'])[:, None]
+#         skip_ids = self.ids_from_chars(['[UNK]'])[:, None]
         sparse_mask = tf.SparseTensor(
-            # Put a -inf at each bad index.
-            values=[-float('inf')]*len(skip_ids),
-            indices=skip_ids,
+#             # Put a -inf at each bad index.
+            values=[-float('inf')]*len(self.ids_from_chars),
+            indices=self.ids_from_chars,
             # Match the shape to the vocabulary
             dense_shape=[len(ids_from_chars.get_vocabulary())])
         self.prediction_mask = tf.sparse.to_dense(sparse_mask)
