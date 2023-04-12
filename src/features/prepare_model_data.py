@@ -78,3 +78,13 @@ def make_training_data(dataset0):
     )
 
     return dataset
+
+
+def prep_model_data(recipe_dict):
+    text = ingredients_to_text(recipe_dict)
+    vocab, ids_from_chars, chars_from_ids = tokenize_text(text)
+    sequences = create_sequences(text, ids_from_chars)
+    dataset0 = sequences.map(split_input_target)
+    dataset = make_training_data(dataset0)
+
+    return dataset
