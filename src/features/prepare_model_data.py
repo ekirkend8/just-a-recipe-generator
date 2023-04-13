@@ -87,4 +87,4 @@ def prep_model_data(recipe_dict):
     dataset0 = sequences.map(split_input_target)
     dataset = make_training_data(dataset0)
 
-    return dataset
+    return dataset, ids_from_chars, chars_from_ids, vocab
