@@ -135,3 +135,10 @@ def apply_one_step_model(model, steps=1000):
 def save_model(model):
     tf.saved_model.save(one_step_model, 'one_step')
     return None
+
+
+def retrieve_model():
+    saved_model = tf.saved_model.load(
+        "one_step", tags=None, options=None
+    )
+    return saved_model
