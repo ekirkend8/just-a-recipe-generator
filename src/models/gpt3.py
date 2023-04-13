@@ -30,3 +30,17 @@ def get_secret():
     return secret[12:-2]
 
 
+def gpt3_recipe(recipe_name):
+    openai.api_key = get_secret()
+
+    response = openai.Completion.create(
+      model="text-davinci-003",
+      prompt=f"How do I make the following:\n\n{recipe_name}",
+      temperature=0.5,
+      max_tokens=1000,
+      top_p=1.0,
+      frequency_penalty=0.8,
+      presence_penalty=0.0
+    )
+
+    return list(list(response.values())[4][0].values())[0].replace("\n", "")
