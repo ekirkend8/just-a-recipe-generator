@@ -109,7 +109,7 @@ def train_rnn_model(dataset, ids_from_chars, vocab, embedding_dim=256, rnn_units
 
     return history, model
 
-    
+
 def create_one_step_model(model, chars_from_ids, ids_from_chars):
     one_step_model = OneStep(model, chars_from_ids, ids_from_chars)
     return one_step_model
@@ -132,13 +132,13 @@ def apply_one_step_model(model, steps=1000):
     print('\nRun time:', end - start)
 
 
-def save_model(model):
-    tf.saved_model.save(one_step_model, 'one_step')
+def save_model(model, location="one_step"):
+    tf.saved_model.save(one_step_model, location)
     return None
 
 
-def retrieve_model():
+def retrieve_model(location):
     saved_model = tf.saved_model.load(
-        "one_step", tags=None, options=None
+        location, tags=None, options=None
     )
     return saved_model
